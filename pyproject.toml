@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "News_Backend"
+version = "0.1.0"
+description = "FastAPI with Poetry and Docker"
+authors = ["Ze <zeliu369@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.110.0"
+uvicorn = "^0.29.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
