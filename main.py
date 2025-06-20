@@ -1,10 +1,27 @@
 import asyncio
 import httpx
 from fastapi import FastAPI
+from pydantic import BaseModel
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 
+
+class HotListItem(BaseModel):
+    # 为列表中的每一项定义数据结构和类型
+    title: Optional[str] = "Untitled"
+    summary: Optional[str] = ""
+    published_at: Optional[str] = ""
+    score: float
+
+
+class HotListResponse(BaseModel):
+    # 定义整个API响应的顶层结构
+    retrieved_at_utc: datetime
+    item_count: int
+    data: List[HotListItem]
+
 # --- 1. 应用实例和内存缓存 ---
+
 
 # 创建 FastAPI 应用实例
 # 我们可以在这里加上标题、描述等元数据，会自动显示在文档里
@@ -141,13 +158,20 @@ async def startup_background_task():
 
 
 # --- 4. 对外暴露的 API 端点 ---
-
-@app.get("/api/hot-list", summary="Get the current hot list", tags=["Ranking"])
+@app.get(
+    "/api/hot-list",
+    response_model=HotListResponse,  # 【关键】指定我们的响应模型
+    summary="获取最新科技新闻热榜",  # 文档里的摘要标题
+    description="此端点返回根据热度算法实时计算的Top 50科技新闻列表。列表每15分钟在后台自动更新一次。",  # 详细描述
+    tags=["Ranking"]  # API分组标签
+)
 def get_hot_list_endpoint():
     """
-    这个端点(endpoint)暴露给前端。
-        它非常快，因为它只是从内存中直接读取`hot_list_cache`的结果，而不需要做任何计算。
-        """
+    获取热榜数据:
+    - **retrieved_at_utc**: 本次请求被处理的时间 (UTC)
+    - **item_count**: 返回列表中的条目数量
+    - **data**: 热榜新闻的列表，已按分数从高到低排序
+    """
     return {
         "retrieved_at_utc": datetime.now(timezone.utc),
         "item_count": len(hot_list_cache),
