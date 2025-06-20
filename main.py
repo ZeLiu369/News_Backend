@@ -113,7 +113,7 @@ async def update_hot_list():
 
 async def background_scheduler():
     """
-    一个无限循环的调度器，它会在应用启动后一直在后台运行。
+    一个无限循环的调度器，它会在应用启动后一直在后台运行。每15分钟运行一次
     """
     print("Background scheduler started.")
     while True:
@@ -133,10 +133,11 @@ async def background_scheduler():
 
 @app.on_event("startup")
 async def startup_background_task():
+    print("Application startup complete. Launching background scheduler...")
     # 使用 asyncio.create_task 让这个任务在后台运行，而不会阻塞应用本身的启动
     asyncio.create_task(background_scheduler())
     # 我们也可以在这里立即执行一次，避免应用刚启动时列表为空
-    await update_hot_list()
+    # await update_hot_list()
 
 
 # --- 4. 对外暴露的 API 端点 ---
