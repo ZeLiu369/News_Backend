@@ -140,8 +140,8 @@ async def background_scheduler():
             # 即使update_hot_list内部有try-except，这里再加一层以确保循环本身不会因意外而崩溃
             print(f"Critical error in background task loop: {e}")
 
-        # 任务执行完后，“睡眠”15分钟
-        await asyncio.sleep(15 * 60)
+        # 任务执行完后，“睡眠”12小时
+        await asyncio.sleep(12 * 60 * 60)
 
 # 使用FastAPI的生命周期事件: 当应用启动完成时，启动我们的后台任务
 
